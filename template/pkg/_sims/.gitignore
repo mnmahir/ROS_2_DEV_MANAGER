@@ -1,0 +1,10 @@
+install/
+log/
+build/
+src/
+
+# Colcon custom files
+COLCON_IGNORE
+
+# Visual Studio code
+.vscode/

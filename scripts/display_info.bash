@@ -1,0 +1,10 @@
+echo -e "$BASH_INFO Project Name: \e[33m$DEV_PROJECT_NAME\e[0m"
+echo -e "$BASH_INFO Project Path: \e[33m$WS_PROJECT_REPO\e[0m"
+echo -e "$BASH_INFO Project Package Path: \e[33m$WS_PROJECT_REPO/pkg\e[0m"
+echo -e "$BASH_INFO Active Workspace: \e[33m$WS_PROJECT_WORKSPACE\e[0m"
+echo -e "$BASH_INFO OS Distro: \e[33m$OS_DISTRO\e[0m"
+echo -e "$BASH_INFO ROS Distro: \e[33m$ROS_DISTRO\e[0m"
+echo -e "$BASH_INFO RMW Implementation: \e[33m$RMW_IMPLEMENTATION\e[0m"
+echo -e "$BASH_INFO ROS ID: \033[5m\e[31m$ROS_DOMAIN_ID\e[0m"
+IPs=""; for ip in $(hostname -I); do IPs+="$ip | "; done; IPs=${IPs::-3}; echo -e "$BASH_INFO Current IP: \e[33m$IPs\e[0m"
+
