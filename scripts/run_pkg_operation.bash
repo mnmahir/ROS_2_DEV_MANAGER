@@ -17,6 +17,7 @@ fi
 # Import functions and variables
 source $WS_DEV_MANAGER_DIR/scripts/func_git_clone.bash
 source $WS_DEV_MANAGER_DIR/scripts/func_source_file.bash
+source $WS_DEV_MANAGER_DIR/scripts/func_pkg_operation.bash
 
 # Variables
 PKG_OPERATION_OPTION=${1:-1}   # 1: Run all, 2: Build only, 3: Apt install only, 4: Git clone only, 5: rosdep update & install only, 6: execute command, 9: Remove build and install folders
