@@ -47,7 +47,7 @@ do
         echo -e "$BASH_WARNING Already in .bashrc: \e[36m$i\e[0m"
     fi
 done
-
+echo -e "\e[0m================================================="
 
 # # Check if aliases exist in the .bashrc file
 # for i in "${bashrc_list[@]}"
