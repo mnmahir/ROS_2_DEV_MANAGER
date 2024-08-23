@@ -14,7 +14,7 @@ Development manager for ROS 2 workspace.
 4. `cd` into the created folder.
 5. Clone this repo as `dev_manager`:
     ```
-    git clone https://github.com/MIMOSRobotics/DEVELOPMENT-MANAGER-ROS-2.git dev_manager
+    git clone https://github.com/mnmahir/ROS_2_DEV_MANAGER.git dev_manager
     ```
 6. `cd` into `dev_manager` dir and run `dev_init.bash` by:
     ```
