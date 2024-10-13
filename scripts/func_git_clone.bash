@@ -41,8 +41,15 @@ function git_clone {
                 echo -e "$BASH_ERROR Could not find commit SHA '$COMMIT_ID' in '$URL'"
                 echo -e "$BASH_WARNING Current HEAD is '$(git rev-parse HEAD)'"
             fi
+            echo -e "$BASH_INFO Initialize any submodule."
+            git submodule init
+            git submodule update
         else
             echo -e "$BASH_WARNING No commit ID or tag given. Will use latest commit from main branch instead."
+            cd $CLONE_DIR/$REPO_DIR_NAME
+            echo -e "$BASH_INFO Initialize any submodule."
+            git submodule init
+            git submodule update
         fi
         echo -e "$BASH_SUCCESS Done cloning '$URL'."
     else
