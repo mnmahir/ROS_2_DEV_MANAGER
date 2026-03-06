@@ -163,11 +163,14 @@ do_git_repo() {
             
             if [ "$git_action" == "clone" ]; then
                 if [ ! -d "$target_dir" ]; then
-                    echo -e "$BASH_LOG_INFO      Running: git clone --recurse-submodules $url $target_dir"
-                    git clone --recurse-submodules "$url" "$target_dir"
-                    if [ -n "$tag" ] && [ -d "$target_dir" ]; then
-                        echo -e "$BASH_LOG_INFO      Checking out $tag"
+                    if [ -n "$tag" ]; then
+                        echo -e "$BASH_LOG_INFO      Running: git clone $url $target_dir"
+                        git clone "$url" "$target_dir"
+                        echo -e "$BASH_LOG_INFO      Checking out $tag and initializing submodules"
                         (cd "$target_dir" && git checkout "$tag" && git submodule update --init --recursive)
+                    else
+                        echo -e "$BASH_LOG_INFO      Running: git clone --recurse-submodules $url $target_dir"
+                        git clone --recurse-submodules "$url" "$target_dir"
                     fi
                 else
                     echo -e "$BASH_LOG_INFO      Repo already exists at $target_dir. Skipping clone."
