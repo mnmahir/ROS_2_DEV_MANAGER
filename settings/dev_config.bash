@@ -21,6 +21,12 @@ export ROS_PRIMARY_PYTHON_ENV_NAME="ros2"     # Name of the python environment. 
 # Above this line, you are allowed to change the value of the variables.
 # But, not recommended to change the name of the variable as it is being used by the manager tool.
 
+# ======= LOCAL OVERRIDES =======
+LOCAL_DEV_CONFIG="$ROS_DEV_DIR/dev_manager/local/local_dev_config.bash"
+if [ -f "$LOCAL_DEV_CONFIG" ]; then
+    source "$LOCAL_DEV_CONFIG"
+fi
+
 # ======= LOGGING =======
 export RCUTILS_COLORIZED_OUTPUT=1
 export RCUTILS_CONSOLE_OUTPUT_FORMAT="[{severity} {time}] [{name}]: {message} ({function_name}() at {file_name}:{line_number})"
