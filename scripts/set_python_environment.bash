@@ -17,6 +17,19 @@ if [ ! -d "$VENV_DIR" ]; then
     
     # Ensure base directory exists
     mkdir -p "$VENV_BASE_DIR"
+
+    # Ensure python3-venv is installed before creating the environment
+    if ! dpkg -s python3-venv >/dev/null 2>&1; then
+        echo -e "$BASH_LOG_INFO Package 'python3-venv' is not installed. Installing it..."
+        sudo apt install -y python3-venv
+
+        if [ $? -ne 0 ]; then
+            echo -e "$BASH_LOG_ERROR Failed to install python3-venv. Cannot create Python virtual environment."
+            return 1
+        fi
+
+        echo -e "$BASH_LOG_SUCCESS Package 'python3-venv' installed successfully."
+    fi
     
     # Create the virtual environment with access to system site-packages (critical for ROS 2 like rclpy)
     python3 -m venv --system-site-packages "$VENV_DIR"
