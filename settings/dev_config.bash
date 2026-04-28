@@ -37,4 +37,4 @@ export __NV_PRIME_RENDER_OFFLOAD=1
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
 
 # ======= GAZEBO SETTINGS =======
-export GZ_SIM_RESOURCE_PATH="${GZ_SIM_RESOURCE_PATH:+$GZ_SIM_RESOURCE_PATH:}$ROS_DATA_DIR/3d_models/gz_models/my_models:$ROS_DATA_DIR/3d_models/gz_models/gazebo_models"
+export GZ_SIM_RESOURCE_PATH="${GZ_SIM_RESOURCE_PATH:+$GZ_SIM_RESOURCE_PATH:}$ROS_DATA_DIR/3d_models/gz_models/my_models:$ROS_DATA_DIR/3d_models/gz_models/downloads:$ROS_DATA_DIR/3d_models/gz_models/gazebo_models"
