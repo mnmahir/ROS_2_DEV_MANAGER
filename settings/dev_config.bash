@@ -38,3 +38,25 @@ export __GLX_VENDOR_LIBRARY_NAME=nvidia
 
 # ======= GAZEBO SETTINGS =======
 export GZ_SIM_RESOURCE_PATH="${GZ_SIM_RESOURCE_PATH:+$GZ_SIM_RESOURCE_PATH:}$ROS_DATA_DIR/3d_models/gz_models/my_models:$ROS_DATA_DIR/3d_models/gz_models/downloads:$ROS_DATA_DIR/3d_models/gz_models/gazebo_models"
+
+# Add installed package share paths so model://<package_name>/... URIs resolve in Gazebo.
+_ROS_GZ_EXTRA_PATHS=()
+
+for _d in \
+    "$ROS_DEV_PACKAGE_DIR/install"/*/share \
+    "$ROS_PRIMARY_BUILD_PATH/install"/*/share \
+    "$ROS_DEV_ROBOT_DIR/${ROS_DEV_ROBOT:-}"/install/*/share \
+    "$ROS_DEV_WORKSPACE_DIR/${ROS_DEV_WORKSPACE:-}"/install/*/share
+do
+    [ -d "$_d" ] && _ROS_GZ_EXTRA_PATHS+=("$_d")
+done
+
+if [ ${#_ROS_GZ_EXTRA_PATHS[@]} -gt 0 ]; then
+    _ROS_GZ_EXTRA_JOINED=$(IFS=:; echo "${_ROS_GZ_EXTRA_PATHS[*]}")
+    export GZ_SIM_RESOURCE_PATH="${GZ_SIM_RESOURCE_PATH:+$GZ_SIM_RESOURCE_PATH:}$_ROS_GZ_EXTRA_JOINED"
+    export IGN_GAZEBO_RESOURCE_PATH="${IGN_GAZEBO_RESOURCE_PATH:+$IGN_GAZEBO_RESOURCE_PATH:}$_ROS_GZ_EXTRA_JOINED"
+fi
+
+unset _ROS_GZ_EXTRA_PATHS
+unset _ROS_GZ_EXTRA_JOINED
+unset _d
