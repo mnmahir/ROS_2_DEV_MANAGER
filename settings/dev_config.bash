@@ -33,5 +33,5 @@ export RCUTILS_CONSOLE_OUTPUT_FORMAT="[{severity} {time}] [{name}]: {message} ({
 export GTEST_COLOR=1
 
 # ======= GPU ACCELERATION ======= (If using "NVIDIA On-Demand" PRIME profile, uncomment below to run/offload GPU supported application. No need if using "NVIDIA Performance Mode".)
-# export __NV_PRIME_RENDER_OFFLOAD=1
-# export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export __NV_PRIME_RENDER_OFFLOAD=1
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
