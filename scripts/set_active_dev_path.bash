@@ -20,6 +20,53 @@ update_active_dev_path() {
     echo "ROS_DEV_WORKSPACE=$ROS_DEV_WORKSPACE" >> "$LOCAL_PATH_FILE"
 }
 
+# Function to populate a new workspace with template files if they are missing
+setup_workspace_if_new() {
+    local ws_path="$ROS_DEV_WORKSPACE_DIR/$ROS_DEV_WORKSPACE"
+    local template_path="$ROS_DEV_MANAGER_DIR/template/ws"
+
+    if [ ! -d "$ws_path/src" ]; then
+        mkdir -p "$ws_path/src"
+        echo -e "$BASH_LOG_INFO Created src/ directory in workspace."
+    fi
+
+    if [ ! -f "$ws_path/pkg_list.bash" ] && [ -f "$template_path/pkg_list.bash" ]; then
+        cp "$template_path/pkg_list.bash" "$ws_path/pkg_list.bash"
+        echo -e "$BASH_LOG_INFO Copied template pkg_list.bash to workspace."
+    fi
+
+    if [ ! -f "$ws_path/.gitignore" ] && [ -f "$template_path/.gitignore" ]; then
+        cp "$template_path/.gitignore" "$ws_path/.gitignore"
+        echo -e "$BASH_LOG_INFO Copied template .gitignore to workspace."
+    fi
+}
+
+# Function to populate a new robot directory with template files if they are missing
+setup_robot_if_new() {
+    local rb_path="$ROS_DEV_ROBOT_DIR/$ROS_DEV_ROBOT"
+    local template_path="$ROS_DEV_MANAGER_DIR/template/rb"
+
+    if [ ! -d "$rb_path/src" ]; then
+        mkdir -p "$rb_path/src"
+        echo -e "$BASH_LOG_INFO Created src/ directory in robot."
+    fi
+
+    if [ ! -d "$rb_path/scripts" ]; then
+        mkdir -p "$rb_path/scripts"
+        echo -e "$BASH_LOG_INFO Created scripts/ directory in robot."
+    fi
+
+    if [ ! -f "$rb_path/pkg_list.bash" ] && [ -f "$template_path/pkg_list.bash" ]; then
+        cp "$template_path/pkg_list.bash" "$rb_path/pkg_list.bash"
+        echo -e "$BASH_LOG_INFO Copied template pkg_list.bash to robot."
+    fi
+
+    if [ ! -f "$rb_path/.gitignore" ] && [ -f "$template_path/.gitignore" ]; then
+        cp "$template_path/.gitignore" "$rb_path/.gitignore"
+        echo -e "$BASH_LOG_INFO Copied template .gitignore to robot."
+    fi
+}
+
 # Generic Menu function
 # Arguments: target_dir, title, var_name
 show_menu() {
@@ -137,16 +184,19 @@ show_menu() {
 if [ "$1" == "--robot" ]; then
     if show_menu "$ROS_DEV_ROBOT_DIR" "Select Robot" "ROS_DEV_ROBOT"; then
         update_active_dev_path
+        setup_robot_if_new
     fi
 elif [ "$1" == "--workspace" ]; then
     if show_menu "$ROS_DEV_WORKSPACE_DIR" "Select Workspace" "ROS_DEV_WORKSPACE"; then
         update_active_dev_path
+        setup_workspace_if_new
     fi
 else
     # Check if current ROS_DEV_ROBOT exists
     if [ "$ROS_DEV_ROBOT" == "None" ] || [ ! -d "$ROS_DEV_ROBOT_DIR/$ROS_DEV_ROBOT" ]; then
         if show_menu "$ROS_DEV_ROBOT_DIR" "Select Robot" "ROS_DEV_ROBOT"; then
             update_active_dev_path
+            setup_robot_if_new
         fi
     fi
 
@@ -154,6 +204,7 @@ else
     if [ "$ROS_DEV_WORKSPACE" == "None" ] || [ ! -d "$ROS_DEV_WORKSPACE_DIR/$ROS_DEV_WORKSPACE" ]; then
         if show_menu "$ROS_DEV_WORKSPACE_DIR" "Select Workspace" "ROS_DEV_WORKSPACE"; then
             update_active_dev_path
+            setup_workspace_if_new
         fi
     fi
     
