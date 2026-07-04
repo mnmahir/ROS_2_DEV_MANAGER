@@ -7,27 +7,46 @@
 # Function to get active pkg collections (excluding hidden ones)
 get_active_pkg_collections() {
     local collections=()
-    for d in "$ROS_DEV_PACKAGE_DIR"/_*; do
-        if [ -d "$d" ] && [ -f "$d/pkg_list.bash" ]; then
+    if [ -d "$ROS_DEV_PACKAGE_DIR" ]; then
+        while IFS= read -r -d '' list_file; do
+            local d
+            d=$(dirname "$list_file")
+            local base_name
+            base_name=$(basename "$d")
+
+            # Collections must keep the underscore prefix convention.
+            if [[ "$base_name" != _* ]]; then
+                continue
+            fi
+
             # Source script in a subshell to safely read PKG_IGNORE
-            local is_ignored=$(bash -c "source \"$d/pkg_list.bash\" && echo \$PKG_IGNORE")
+            local is_ignored
+            is_ignored=$(bash -c 'source "$1" && echo "$PKG_IGNORE"' _ "$list_file")
+
             # If not precisely True, we consider it visible/active
             if [ "${is_ignored,,}" != "true" ]; then
                 collections+=("$d")
             fi
-        fi
-    done
+        done < <(find "$ROS_DEV_PACKAGE_DIR" -mindepth 2 -type f -name pkg_list.bash -print0 | sort -z)
+    fi
     echo "${collections[@]}"
 }
 
 # Function to get ALL pkg collections (including hidden ones)
 get_all_pkg_collections() {
     local collections=()
-    for d in "$ROS_DEV_PACKAGE_DIR"/_*; do
-        if [ -d "$d" ] && [ -f "$d/pkg_list.bash" ]; then
-            collections+=("$d")
-        fi
-    done
+    if [ -d "$ROS_DEV_PACKAGE_DIR" ]; then
+        while IFS= read -r -d '' list_file; do
+            local d
+            d=$(dirname "$list_file")
+            local base_name
+            base_name=$(basename "$d")
+
+            if [[ "$base_name" == _* ]]; then
+                collections+=("$d")
+            fi
+        done < <(find "$ROS_DEV_PACKAGE_DIR" -mindepth 2 -type f -name pkg_list.bash -print0 | sort -z)
+    fi
     echo "${collections[@]}"
 }
 
@@ -40,7 +59,7 @@ ask_path_selection() {
     echo -e "[\e[36m2\e[0m] Workspace only - $ROS_DEV_WORKSPACE"
     echo -e "[\e[36m3\e[0m] Robot only - $ROS_DEV_ROBOT"
     echo -e "[\e[36m4\e[0m] All of visible pkg collection - pkg"
-    echo -e "[\e[36m5\e[0m] Selected visible pkg collection only - pkg/_XXXX"
+    echo -e "[\e[36m5\e[0m] Selected visible pkg collection only - pkg/**/_XXXX"
     echo -e "[\e[36mQ\e[0m] Cancel"
     echo -e "\e[33m=========================================\e[0m"
     echo -n -e "$BASH_LOG_ACTION Select an option: "
@@ -78,7 +97,7 @@ ask_path_selection() {
             echo -e "\n\e[33m===== Select Visible Pkg Collection =====\e[0m"
             local idx=1
             for coll in "${active_collections[@]}"; do
-                local cname=$(basename "$coll")
+                local cname="${coll#$ROS_DEV_PACKAGE_DIR/}"
                 echo -e "[\e[36m$idx\e[0m] $cname"
                 ((idx++))
             done
@@ -316,7 +335,7 @@ manage_collections_visibility() {
         echo -e "\n\e[33m===== Hide/Unhide Pkg Collections =====\e[0m"
         local idx=1
         for coll in "${all_collections[@]}"; do
-            local cname=$(basename "$coll")
+            local cname="${coll#$ROS_DEV_PACKAGE_DIR/}"
             local is_ignored=$(bash -c "source \"$coll/pkg_list.bash\" && echo \$PKG_IGNORE")
             
             if [ "${is_ignored,,}" == "true" ]; then

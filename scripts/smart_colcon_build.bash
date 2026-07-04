@@ -30,14 +30,22 @@ fi
 get_active_pkg_collections() {
     local collections=()
     if [ -d "$ROS_DEV_PACKAGE_DIR" ]; then
-        for d in "$ROS_DEV_PACKAGE_DIR"/_*; do
-            if [ -d "$d" ] && [ -f "$d/pkg_list.bash" ]; then
-                local is_ignored=$(bash -c "source \"$d/pkg_list.bash\" && echo \$PKG_IGNORE")
-                if [ "${is_ignored,,}" != "true" ]; then
-                    collections+=("$d")
-                fi
+        while IFS= read -r -d '' list_file; do
+            local d
+            d=$(dirname "$list_file")
+            local base_name
+            base_name=$(basename "$d")
+
+            if [[ "$base_name" != _* ]]; then
+                continue
             fi
-        done
+
+            local is_ignored
+            is_ignored=$(bash -c 'source "$1" && echo "$PKG_IGNORE"' _ "$list_file")
+            if [ "${is_ignored,,}" != "true" ]; then
+                collections+=("$d")
+            fi
+        done < <(find "$ROS_DEV_PACKAGE_DIR" -mindepth 2 -type f -name pkg_list.bash -print0 | sort -z)
     fi
     echo "${collections[@]}"
 }
